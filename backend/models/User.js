@@ -13,12 +13,21 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-    firstName: {
+    fullName: {
         type: String,
-        required: true,
-    }, 
-    lastName: {
+        required: true
+    },
+    phoneNumber: {
         type: String,
+        required: false,
+    },
+    field: {
+        type: String,
+        required: false
+    },
+    accountType: {
+        type: String,
+        enum: ['user', 'publisher'],
         required: true
     }
 },
@@ -30,7 +39,7 @@ const UserSchema = new Schema({
 
 UserSchema.pre('save', async function () {
     try {
-        const hashedPwd =  await hash(this.password, 10)
+        const hashedPwd = await hash(this.password, 10)
         this.password = hashedPwd
     } catch (error) {
         console.log('error hashing password:', error.message)

@@ -29,15 +29,17 @@ export const loginController = expressAsyncHandler(async (req, res, next) => {
 
 
 export const addUser = expressAsyncHandler(async (req, res, next) => {
-    const { firstName, lastName, email, password } = req.body
-    const { error, value } = UserValidObject.validate({ firstName, lastName, email, password })
+    const { fullName, email, password, field, phoneNumber, accountType } = req.body
+    const { error, value } = UserValidObject.validate({ fullName, email, password })
     if (error) return next(new Error(error.details[0].message))
 
     const user = {
         email: value.email,
         password: value.password,
-        firstName: value.firstName,
-        lastName: value.lastName
+        fullName: value.fullName,
+        field: field ? field : null,
+        phoneNumber: phoneNumber ? phoneNumber : null,
+        accountType
     }
 
     const newUser = await createUser(user)

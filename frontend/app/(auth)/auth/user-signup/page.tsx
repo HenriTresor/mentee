@@ -1,32 +1,90 @@
 'use client'
+import api from '@/utils/api'
 import { Input } from 'antd'
 import { Briefcase, Eye, EyeOff, Mail, Phone, User } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+import React, { RefObject, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
 
 type Props = {}
 
 function UserSignup({ }: Props) {
+
+    const [emailStatus, setEmailStatus] = useState<"" | "warning" | "error" | undefined>("")
+    const [pwdStatus, setPwdStatus] = useState<"" | "warning" | "error" | undefined>("")
+    const [nameStatus, setNameStatus] = useState<"" | "warning" | "error" | undefined>("")
+    const [loading, setLoading] = useState(false)
+    const [pwdConfirm, setPwdConfirm] = useState("")
+
+    const form: RefObject<HTMLFormElement> = useRef(null);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setLoading(true)
+        try {
+            let formData: FormData = new FormData();
+            if (form.current) {
+                formData = new FormData(form.current);
+            } else {
+                console.error("Form element not found");
+                return
+            }
+
+            const email = formData.get('email')
+            const password = formData.get('password')
+            const fullName = formData.get('fullName')
+            if (!email) {
+                toast.error("email is required")
+                return setEmailStatus("error")
+            } else { setEmailStatus("") }
+            if (!password) {
+                toast.error("password is required")
+                return setPwdStatus("error")
+            } else { setPwdStatus("") }
+
+            if (!fullName) {
+                toast.error("Full Name is required")
+                return setNameStatus("error")
+            } else { setNameStatus("") }
+
+
+            if (password !== pwdConfirm) {
+
+                return toast.error("Passwords mismatch. Confirm password Again")
+            }
+
+            const res = await api.server.POST('/users', { email, password, fullName, accountType:'user' }, '')
+            const data = await res.json()
+            if (!data.status) return toast.error(data.message)
+            toast.success("User added successfully!")
+        } catch (error: any) {
+            toast.error(error.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <div className='w-full flex'>
             <div className='w-[50%] p-10 text-center flex flex-col gap-10'>
                 <h1 className="text-[#416644] font-bold text-[1.3rem]">Sign up as a user</h1>
 
-                <form action="" className='flex flex-col gap-4'>
+                <form action="" className='flex flex-col gap-4' ref={form} onSubmit={(e) => handleSubmit(e)}>
                     <div className='input__container'>
-                        <Input placeholder='Full Name' />
+                        <Input name="fullName" status={nameStatus} placeholder='Full Name' />
                         <User />
                     </div>
 
                     <div className='input__container'>
-                        <Input placeholder='Email' />
+                        <Input name="email" status={emailStatus} placeholder='Email' />
                         <Mail />
                     </div>
 
                     <div className='input__container'>
                         <Input.Password
                             className='bg-[#DADADA]'
+                            name="password" status={pwdStatus}
                             placeholder="input password"
                             iconRender={(visible) => (visible ? <Eye /> : <EyeOff />)}
                         />
@@ -34,6 +92,8 @@ function UserSignup({ }: Props) {
                     </div> <div className='input__container'>
                         <Input.Password
                             className='bg-[#DADADA]'
+                            value={pwdConfirm}
+                            onChange={(vl) => setPwdConfirm(vl.target.value)}
                             placeholder="Confirm password"
                             iconRender={(visible) => (visible ? <Eye /> : <EyeOff />)}
                         />
@@ -42,7 +102,7 @@ function UserSignup({ }: Props) {
 
 
                     <div className=''>
-                        <button className="bg-[#6E956C]  p-4 text-white w-full">
+                        <button className="bg-[#6E956C] disabled:bg-[#546053] disabled:cursor-not-allowed p-4 text-white w-full" disabled={loading}>
                             Sign up
                         </button>
                     </div>

@@ -1,6 +1,7 @@
 import { Poppins } from 'next/font/google';
 import React from 'react'
 import '../globals.css'
+import ToastContainer from '@/providers/ToastContainer';
 
 type Props = {
     children: React.ReactNode
@@ -15,7 +16,9 @@ function AuthLayout({ children }: Props) {
     return (
         <html lang='en'>
             <body className={poppins.className + ' m-0 p-0'}>
-                {children}
+                <ToastContainer>
+                    {children}
+                </ToastContainer>
             </body>
         </html>
     )

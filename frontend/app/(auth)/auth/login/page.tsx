@@ -1,27 +1,72 @@
 'use client'
+import api from '@/utils/api'
 import { Input } from 'antd'
 import { Briefcase, Eye, EyeOff, Mail, Phone, User } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+import React, { MutableRefObject, RefObject, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
 
 type Props = {}
 
 function Login({ }: Props) {
+    const [emailStatus, setEmailStatus] = useState<"" | "warning" | "error" | undefined>("")
+    const [pwdStatus, setPwdStatus] = useState<"" | "warning" | "error" | undefined>("")
+    const [loading, setLoading] = useState(false)
+
+    const form: RefObject<HTMLFormElement> = useRef(null);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setLoading(true)
+        try {
+            let formData: FormData = new FormData();
+            if (form.current) {
+                formData = new FormData(form.current);
+            } else {
+                console.error("Form element not found");
+                return
+            }
+
+            const email = formData.get('email')
+            const password = formData.get('password')
+            if (!email) {
+                toast.error("email is required")
+                return setEmailStatus("error")
+            } else { setEmailStatus("") }
+            if (!password) {
+                toast.error("Password is required")
+                return setPwdStatus("error")
+            } else { setPwdStatus("") }
+
+
+            const res = await api.server.POST('/auth/login', { email, password }, '')
+            const data = await res.json()
+            // console.log(data)
+            if (!data.status) return toast.error(data.message)
+            toast.success("user logged in")
+        } catch (error: any) {
+            toast.error(error.message)
+        } finally {
+            setLoading(false)
+        }
+    }
     return (
         <div className='w-full flex'>
             <div className='w-[50%] p-10 text-center flex flex-col gap-10'>
                 <h1 className="text-[#416644] font-bold text-[1.3rem]">Log In</h1>
 
-                <form action="" className='flex flex-col gap-4 h-[80dvh] justify-center'>
+                <form action="" className='flex flex-col gap-4 h-[80dvh] justify-center' ref={form} onSubmit={(e) => handleSubmit(e)}>
 
                     <div className='input__container'>
-                        <Input placeholder='Email' />
+                        <Input status={emailStatus} name="email" placeholder='Email' />
                         <Mail />
                     </div>
 
                     <div className='input__container'>
                         <Input.Password
+                            name='password'
+                            status={pwdStatus}
                             className='bg-[#DADADA]'
                             placeholder="Password"
                             iconRender={(visible) => (visible ? <Eye /> : <EyeOff />)}
@@ -30,7 +75,7 @@ function Login({ }: Props) {
                     </div>
 
                     <div className=''>
-                        <button className="bg-[#6E956C]  p-4 text-white w-full">
+                        <button disabled={loading} className="bg-[#6E956C] disabled:bg-[#6a7969] disabled:cursor-not-allowed  p-4 text-white w-full" type='submit'>
                             Log in
                         </button>
                     </div>
@@ -44,7 +89,7 @@ function Login({ }: Props) {
                         </button>
                     </div>
                     <p className='text-left'>
-                        Don't have an account yet? <Link href="/auth/get-started" className='font-bold'>Create One!</Link>
+                        Don&apos;t have an account yet? <Link href="/auth/get-started" className='font-bold'>Create One!</Link>
                     </p>
                 </form>
             </div>
