@@ -25,9 +25,11 @@ function LandingHeader({ }: Props) {
                 }
             </div>
 
-            <button className='btn btn-outlined'>
-                get started
-            </button>
+            <Link href={"/auth/get-started"}>
+                <button className='btn btn-outlined'>
+                    get started
+                </button>
+            </Link>
         </div>
     )
 }

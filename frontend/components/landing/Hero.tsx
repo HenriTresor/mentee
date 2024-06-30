@@ -15,7 +15,9 @@ function Hero({ }: Props) {
 
         <p className=''>Get Started With Us</p>
         <div className="flex items-center gap-4">
+          <Link href={"/auth/get-started"}>
           <button className='bg-[#6E956C] p-4'>Be a publisher</button>
+          </Link>
           <Link href="/learn">
           <button className='bg-[#6E956C]  p-4'>Get Help</button>
           </Link>

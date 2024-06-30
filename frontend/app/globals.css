@@ -218,3 +218,14 @@ input:focus{
   z-index: 2;
 }
 
+
+
+.input__container{
+  @apply p-2 mt-3 mb-3 flex bg-[#DADADA] items-center gap-3 rounded-md
+}
+
+
+.input__container input {
+  padding: 0.7em !important;
+  background: #DADADA !important;
+}
