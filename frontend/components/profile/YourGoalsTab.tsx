@@ -59,7 +59,7 @@ function YourGoalsTab({ }: Props) {
         </div>
         <div className="flex flex-col items-center md:w-1/3 p-4">
           <h2 className="text-xl font-bold text-green-700">Say bye to my stigma</h2>
-          <p>Don't let the past hold me back. Embrace the present and live in the moment.</p>
+          <p>Don&apos;t let the past hold me back. Embrace the present and live in the moment.</p>
         </div>
       </div>
       <div className="flex justify-between items-center w-full bg-green-500 h-2 my-4">

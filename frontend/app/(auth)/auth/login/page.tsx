@@ -1,11 +1,15 @@
 'use client'
+import { authenticate } from '@/app/redux/slicers/userSlice'
+import { RootState } from '@/app/redux/store'
 import api from '@/utils/api'
 import { Input } from 'antd'
 import { Briefcase, Eye, EyeOff, Mail, Phone, User } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { MutableRefObject, RefObject, useRef, useState } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
+import React, { MutableRefObject, RefObject, useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
+import { useDispatch, useSelector } from 'react-redux'
 
 type Props = {}
 
@@ -13,6 +17,9 @@ function Login({ }: Props) {
     const [emailStatus, setEmailStatus] = useState<"" | "warning" | "error" | undefined>("")
     const [pwdStatus, setPwdStatus] = useState<"" | "warning" | "error" | undefined>("")
     const [loading, setLoading] = useState(false)
+    const dispatch = useDispatch()
+    const { authenticated, user } = useSelector((state: RootState) => state.user)
+    const searchParams = useSearchParams()
 
     const form: RefObject<HTMLFormElement> = useRef(null);
 
@@ -42,15 +49,29 @@ function Login({ }: Props) {
 
             const res = await api.server.POST('/auth/login', { email, password }, '')
             const data = await res.json()
-            // console.log(data)
             if (!data.status) return toast.error(data.message)
-            toast.success("user logged in")
+            dispatch(authenticate({ token: data.token, user: data.user }))
+            toast.success(`authenticated user ${data.user?.email}`)
         } catch (error: any) {
             toast.error(error.message)
         } finally {
             setLoading(false)
         }
     }
+
+    useEffect(() => {
+        if (searchParams?.size !== undefined && searchParams?.size > 0) {
+            const token = searchParams.get('token')
+            const user = JSON.parse(searchParams.get('user') || '{}')
+            dispatch(authenticate({ token: token, user: user }))
+        }
+    }, [])
+
+    useEffect(() => {
+        if (authenticated) {
+            toast.success(`authenticated user ${user?.email}`)
+        }
+    }, [authenticated])
     return (
         <div className='w-full flex'>
             <div className='w-[50%] p-10 text-center flex flex-col gap-10'>
@@ -81,12 +102,15 @@ function Login({ }: Props) {
                     </div>
                     <p className='text-left'>Continue with: </p>
                     <div className="flex justify-start gap-3">
-                        <button className="border-[#6E956C] border  p-4 text-[#6E956C]">
+                        <button className="border-[#6E956C] border  p-4 text-[#6E956C]"
+                            type='button'
+                            onClick={() => {
+                                window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`
+                            }}
+                        >
                             Google
                         </button>
-                        <button className="border-[#6E956C] border  p-4 text-[#6E956C]">
-                            Apple
-                        </button>
+
                     </div>
                     <p className='text-left'>
                         Don&apos;t have an account yet? <Link href="/auth/get-started" className='font-bold'>Create One!</Link>

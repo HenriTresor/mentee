@@ -7,12 +7,20 @@ import cors from 'cors'
 import ResourceRouter from './routes/Resource.js'
 import authRouter from './routes/auth.js'
 import userRouter from './routes/User.js'
+import passport from 'passport'
+import './strategies/Google.js'
+import { config } from 'dotenv'
+import session from 'express-session'
+
+config() 
+
 
 const app = express()
 const PORT = process.env.PORT || 8080
 const server = http.createServer(app)
 const ROOT_ROUTE = '/api/v1'
 
+app.use(session({ secret: process.env.SESSION_SECRET, saveUninitialized: true, resave: false }))
 
 app.use(cors())
 app.use(morgan('dev'))
@@ -23,6 +31,20 @@ app.use(express.json())
 app.use(`${ROOT_ROUTE}/resources`, ResourceRouter)
 app.use(`${ROOT_ROUTE}/auth`, authRouter)
 app.use(`${ROOT_ROUTE}/users`, userRouter)
+ 
+
+app.use(passport.initialize())
+app.use(passport.session());
+
+
+passport.serializeUser(function (user, cb) {
+    cb(null, user);
+});
+
+passport.deserializeUser(function (obj, cb) {
+    cb(null, obj);
+})
+
 
 db().then(() => {
     server.listen(PORT, () => {

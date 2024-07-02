@@ -15,6 +15,8 @@ export const loginController = expressAsyncHandler(async (req, res, next) => {
     let user = await getUserByEmail(value.email)
     if (!user) return next(new Error(`User with email ${value.email} was not found. Try again`))
 
+    if (user.googleId) return next(new Error("You previously logged in with google. use google to login again."))
+
     const pwdCompare = await bcrypt.compare(password, user.password)
     if (!pwdCompare) return next(new Error(`Password or email is not correct`))
 

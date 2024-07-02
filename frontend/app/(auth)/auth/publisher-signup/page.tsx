@@ -115,12 +115,15 @@ function PublisherSignup({ }: Props) {
                     </div>
                     <p className='text-left'>Continue with: </p>
                     <div className="flex justify-start gap-3">
-                        <button className="border-[#6E956C] border  p-4 text-[#6E956C]">
+                        <button className="border-[#6E956C] border  p-4 text-[#6E956C]"
+                            type='button'
+                            onClick={() => {
+                                window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`
+                            }}
+                        >
                             Google
                         </button>
-                        <button className="border-[#6E956C] border  p-4 text-[#6E956C]">
-                            Apple
-                        </button>
+
                     </div>
                     <p className='text-left'>
                         Already have an account? <Link href="/auth/login" className='font-bold'>Login</Link>

@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "../globals.css";
 import LandingHeader from "@/components/landing/Header";
 import LandingFooter from "@/components/landing/Footer";
+import AppProvider from '@/providers/AppProvider';
 
 
 const poppins = Poppins({
@@ -24,9 +25,11 @@ export default function RootLayout({
     // <Suspense>
     <html lang="en">
       <body className={poppins.className}>
-            <LandingHeader />
-        {children}
-        <LandingFooter/>
+        <AppProvider>
+          <LandingHeader />
+          {children}
+          <LandingFooter />
+        </AppProvider>
       </body>
     </html>
   );
