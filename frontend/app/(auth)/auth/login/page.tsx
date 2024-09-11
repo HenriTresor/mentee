@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import { authenticate } from '@/app/redux/slicers/userSlice'
 import { RootState } from '@/app/redux/store'

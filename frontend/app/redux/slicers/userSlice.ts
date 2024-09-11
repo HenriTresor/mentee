@@ -4,7 +4,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     token: null,
     user: {
-        email: ''
+        email: '',
+        fullName: ''
     },
     authenticated: false
 }

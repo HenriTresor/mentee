@@ -4,3 +4,4 @@ dan-zoom-main
 frontend/.git
 **/node_modules
 **/.env
+.vscode

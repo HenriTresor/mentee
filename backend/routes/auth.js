@@ -24,7 +24,7 @@ router.get('/google/callback', passport.authenticate('google', {
     failureRedirect: `${process.env.BACKEND_URL}/auth/google`,
 }), async (req, res, next) => {
     const token = await createToken(req.user._id)
-    res.redirect(`${process.env.FRONTEND_URL}/auth/login?token=${token}&user=${JSON.stringify(req.user)}`)
+    res.redirect(`${process.env.FRONTEND_URL}?token=${token}&user=${JSON.stringify(req.user)}`)
 })
 
 // Export the router

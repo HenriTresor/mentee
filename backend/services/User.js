@@ -6,7 +6,7 @@ export const getUserByEmail = async (email) => {
         return user
     } catch (error) {
         throw new Error(error)
-    }
+    }  
 }
 
 export const createUser = async (user) => {

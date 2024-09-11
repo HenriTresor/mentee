@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import store from "@/app/redux/store";
 import { Provider } from "react-redux";
 import api from "@/utils/api";
+import AuthProvider from "./AuthProvider";
 
 const ToastContainer = ({ children }: { children: React.ReactNode }) => {
     const [token, setToken] = React.useState('')
@@ -33,8 +34,10 @@ const ToastContainer = ({ children }: { children: React.ReactNode }) => {
     }, [token])
     return (
         <Provider store={store}>
-            {children}
-            <Toaster position="top-right" reverseOrder={false} />
+            <AuthProvider>
+                {children}
+                <Toaster position="top-right" reverseOrder={false} />
+            </AuthProvider>
         </Provider>
     )
 }
